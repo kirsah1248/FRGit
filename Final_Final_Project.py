@@ -77,7 +77,7 @@ meal_db["0"] = Meal("Channa", ["lunch", "dinner"], ["chole", "turmeric", "zeera"
 meal_db["1"] = Meal("Dosa", ["lunch", "dinner", "breakfast"], ["dosa mix", "masala"])
 meal_db["2"] = Meal("Gol guppa", ["lunch", "breakfast"], ["masala","aloo"])
 meal_db["3"] = Meal("Pooha", ["breakfast", "lunch"], ["turmeric", "rice"])
-meal_db["4"] = Meal("Pasta", ["lunch, dinner"], ["pasta", "tomatos"])
+meal_db["4"] = Meal("Pasta", ["lunch", "dinner"], ["pasta", "tomatos"])
 meal_db["5"] = Meal("Dumplings", ["dinner"], ["dumpling skin", "veggies"])
 
 def ingre_add(meal_num):
@@ -200,7 +200,9 @@ def search(tags):
     meals = {}
     for x in meal_db:
         if set(tags) <= set(meal_db[x].ingredients+meal_db[x].category):
-            meals[x] = meal_db[str(x)]
+            meals[x] = meal_db[x]
+    if len(meals) == 0:
+        return "there are no meals with those tags"
     return meals
 
 def meal_view(meal_content):
@@ -272,10 +274,9 @@ def main():
     time = now.strftime("%d-%m-%y~%H-%M-%S.txt")
     main_check = True
     
-
-    try:
-        while main_check:
-            user_input = input("\n1. generate meal plan\n2. generate meal plan using filters\n3. see all meals in database\n4. add a meal to your database\n5. search for a meal\n6. exit\n")
+    while main_check:
+        try:
+            user_input = input("\n1. generate meal plan\n2. generate meal plan using filters\n3. see all meals in database\n4. add a meal to your database\n5. search by tags\n6. exit\n")
             user_input = int(user_input)
            
             if user_input == 1:
@@ -463,12 +464,44 @@ def main():
             
             if user_input == 4:
                 add_meal()
+            
+            
             if user_input == 5:
-                pass
+                check1 = True
+                while check1:
+                    tags = input("Enter categories and/or ingredients you wish to search by (seperated by commas):\n")
+                    found_meals = search(tags)
+                    print("\n" + str(len(found_meals)) + " found\n")
+                    if type(found_meals) == dict:   
+                        found_meals_list = [(k, v) for k, v in found_meals.items()]
+                        found_meals_list.sort()
+                        for i in range(len(found_meals_list)):
+                            x = found_meals_list[i][0]
+                            print(str(x)+": "+found_meals_list[i][1].name)
+
+                        check2 = True
+                        while check2:  
+                            meal_info = input("\n1. see meal info\n2. search again\n3. exit\n")
+                            try:
+                                meal_info = int(meal_info)
+                                if meal_info == 1:
+                                    meal_num = input("enter meal number:\n")
+                                    meal_num = int(meal_num)
+                                    meal_db[str(meal_num)].info()
+                                
+                                if meal_info == 2:
+                                    break
+
+                                if meal_info == 3:
+                                    check1 = False
+                                    check2 = False
+                            except:
+                                print("please enter a valid number")
+            
             if user_input == 6:
                 meal_db.close()
                 main_check = False
-    except:
-        pass
+        except:
+            print("please enter a valid number")
     
 main()
