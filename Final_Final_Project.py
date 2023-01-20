@@ -113,6 +113,19 @@ def ingre_rem(meal_num):
             print("seperate using a space and a comma")
             ingre_add()  
 
+def categ_rem(meal_num):
+        categ_input = input("categories you would like to remove (seperate ingredients using a comma):\n")
+        try:
+            categ_list = categ_input.split(', ')
+            if set(categ_list) <= set(meal_db[meal_num].category):    
+                meal_db[meal_num].category = [i for i in meal_db[meal_num].category if i not in categ_list]
+            meal_db[meal_num].info()
+            meal_db.sync()
+            return categ_list
+        except:
+            print("seperate using a space and a comma")
+            ingre_add()  
+
 def add_meal():
     name = input("meal name:\n")
     ingredients = ingre_add()
@@ -332,7 +345,7 @@ def main():
                 while check:
                     try:
                         day_num = input("How many days would you like to generate?\n")
-                        tags = input("Enter tags you would like to use (seperated by commas):")
+                        tags = input("Enter tags you would like to use (seperated by commas):\n")
                         day_num = int(day_num)
                         check = False
                     except:
@@ -399,6 +412,8 @@ def main():
                     try:
                         meal_info = input("\n\n1. See meal info\n2. edit meal\n3. exit\n")
                         meal_info = int(meal_info)
+                        
+                        
                         if meal_info == 1:
                             meal_info = input("Enter meal number:\n")
                             try:
@@ -407,36 +422,43 @@ def main():
                                 continue
                             except:
                                 print("please enter a valid number")
+                        
+                        
                         if meal_info == 2:
                             meal_info = input("Enter meal number:\n")
                             try:
                                 meal_info = int(meal_info)
-                                editing = input("Would you like to edit catagories or ingredients? c/i")
+                                editing = input("Would you like to edit catagories or ingredients? c/i\n")
                                 check3 = True
+                                
                                 while check3:
                                     if editing == "c":
-                                        add_rem = input("Add or remove categories? a/r")
+                                        add_rem = input("Add or remove categories? a/r\n")
                                         if add_rem == "a":    
-                                            categ_add()
+                                            categ_add(str(meal_info))
                                             check3 = False
                                         elif add_rem == "r":
-                                            pass
-                                            #categ_rem()
+                                            categ_rem(str(meal_info))
+                                            check3 = False
+                                    
                                     elif editing == "i":
-                                        add_rem = input("Add or remove ingredients? a/r")
+                                        add_rem = input("Add or remove ingredients? a/r\n")
                                         if add_rem == "a":    
-                                            ingre_add()
+                                            ingre_add(str(meal_info))
                                             check3 = False
                                         elif add_rem == "r":
                                             ingre_rem(str(meal_info))
-                                            #categ_rem()
+                                            check3 = False
                                 continue
                             except:
                                 print("please enter a valid number")
-
+                        
+                        
+                        if meal_info == 3:
+                            check2 = False
 
                     except:
-                        print("please enter a valid number\n")
+                        print("please enter a valid meal number\n")
             
             
             if user_input == 4:
