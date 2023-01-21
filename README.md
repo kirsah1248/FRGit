@@ -2,8 +2,8 @@
 https://docs.google.com/spreadsheets/d/1w85Sdsa-MR5JLFu9Gs_uRjEeWcM1Vi2n-HPVxoWzqDo/edit#gid=0
 
 
-My meal plan app can do the following:
-  add and remove meals
+My meal plan app can do the following:\n
+  add and remove meals,
   edit meal information
   see all meals in the database
   generate meal plans
