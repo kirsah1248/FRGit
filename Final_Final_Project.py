@@ -73,12 +73,6 @@ class Meal:
         return False
 
 meal_db = shelve.open("meals", writeback=True)
-meal_db["0"] = Meal("Channa", ["lunch", "dinner"], ["chole", "turmeric", "zeera"])
-meal_db["1"] = Meal("Dosa", ["lunch", "dinner", "breakfast"], ["dosa mix", "masala"])
-meal_db["2"] = Meal("Gol guppa", ["lunch", "breakfast"], ["masala","aloo"])
-meal_db["3"] = Meal("Pooha", ["breakfast", "lunch"], ["turmeric", "rice"])
-meal_db["4"] = Meal("Pasta", ["lunch", "dinner"], ["pasta", "tomatos"])
-meal_db["5"] = Meal("Dumplings", ["dinner"], ["dumpling skin", "veggies"])
 
 def ingre_add(meal_num):
         ingre_input = input("ingredients \n(seperate ingredients using a comma)\n")
@@ -273,235 +267,241 @@ def meal_view(meal_content):
 def main():
     time = now.strftime("%d-%m-%y~%H-%M-%S.txt")
     main_check = True
-    
+    if len(meal_db) == 0:
+        check = True
+        print("there are no meals in your database")
+        add_meal()
+
     while main_check:
-        try:
-            user_input = input("\n1. generate meal plan\n2. generate meal plan using filters\n3. see all meals in database\n4. add a meal to your database\n5. search by tags\n6. exit\n")
-            user_input = int(user_input)
-           
-            if user_input == 1:
-                
-                check = True
-                while check:
-                    try:
-                        day_num = input("How many days would you like to generate?\n")
-                        day_num = int(day_num)
-                        check = False
-                    except:
-                        print("please enter a valid number")
+        user_input = input("\n1. generate meal plan\n2. generate meal plan using filters\n3. see all meals in database\n4. add a meal to your database\n5. search by tags\n6. exit\n")
+        
+        if user_input == "1":
             
-                generated = meal_generation(day_num)
-                contents = meal_view(generated)
-                check = True
+            check = True
+            while check:
+                try:
+                    day_num = input("How many days would you like to generate?\n")
+                    day_num = int(day_num)
+                    check = False
+                except:
+                    print("please enter a valid number")
+        
+            generated = meal_generation(day_num)
+            contents = meal_view(generated)
+            check = True
 
-                while check:
-                    save = input("1. change a day\n2. download\n3. exit\n")
-                    if save == "1":
-                        use_filter = input("Use filters? (This is needed if you wish to use your origianl tags) y/n\n")
-                        check1 = True
-                        
-                        
-                        if use_filter in ["n", "N"]:
-                            
-                            while check1:
-                                day_num = input("what day would you like to change?\n")
-                                try:
-                                    day_num = int(day_num)
-                                    check1 = False
-                                except:
-                                    print("please enter a valid day number\n")
-                            
-                            if day_num in range(1, len(generated)):
-                                generated = switch_meals_reg(day_num, generated)
-                                contents = meal_view(generated)
-                        
-                        elif use_filter in ["Y", "y"]:
-                            while check1:
-                                day_num = input("what day would you like to change?\n")
-                                tags = input("what tags would you like to use?\n")
-                                try:
-                                    day_num = int(day_num)
-                                    check1 = False
-                                except:
-                                    print("please enter a valid day number\n")
-                            
-                            if day_num in range(1, len(generated)):
-                                generated = switch_meals_filter(day_num, generated, tags)
-                                contents = meal_view(generated)
-                            
-                    elif save == "2":
-                        with open(time, "x") as f:
-                            f.write(contents)
-                    elif save == "3":
-                        check = False
-                        break
+            while check:
+                save = input("1. change a day\n2. download\n3. exit\n")
+                if save == "1":
+                    use_filter = input("Use filters? (This is needed if you wish to use your origianl tags) y/n\n")
+                    check1 = True
                     
-                    else:
-                        print("please enter a valid number")
-
-
-            if user_input == 2:
-                
-                check = True
-                while check:
-                    try:
-                        day_num = input("How many days would you like to generate?\n")
-                        tags = input("Enter tags you would like to use (seperated by commas):\n")
-                        day_num = int(day_num)
-                        check = False
-                    except:
-                        print("please enter a valid number")
-            
-                generated = filter_generation(day_num, tags)
-                contents = meal_view(generated)
-                check = True
-
-                while check:
-                    save = input("1. change a day\n2. download\n3. exit\n")
-                    if save == "1":
-                        use_filter = input("Use filters? y/n\n")
-                        check1 = True
-                        
-                        
-                        if use_filter in ["n", "N"]:
-                            
-                            while check1:
-                                day_num = input("what day would you like to change?\n")
-                                try:
-                                    day_num = int(day_num)
-                                    check1 = False
-                                except:
-                                    print("please enter a valid day number\n")
-                            
-                            if day_num in range(1, len(generated)):
-                                generated = switch_meals_reg(day_num, generated)
-                                contents = meal_view(generated)
-                        
-                        elif use_filter in ["Y", "y"]:
-                            while check1:
-                                day_num = input("what day would you like to change?\n")
-                                tags = input("what tags would you like to use?\n")
-                                try:
-                                    day_num = int(day_num)
-                                    check1 = False
-                                except:
-                                    print("please enter a valid day number\n")
-                            
-                            if day_num in range(1, len(generated)):
-                                generated = switch_meals_filter(day_num, generated, tags)
-                                contents = meal_view(generated)
-                            
-                    elif save == "2":
-                        with open(time, "x") as f:
-                            f.write(contents)
-                    elif save == "3":
-                        check = False
-                        break
                     
-                    else:
-                        print("please enter a valid number")
-            
-            
-            if user_input == 3:
-                i = 0
-                check2 = True
-
-                while i in range(len(meal_db)):
-                    print(str(i)+ ": " + meal_db[str(i)].name)
-                    i += 1
-                while check2:
-                    try:
-                        meal_info = input("\n\n1. See meal info\n2. edit meal\n3. exit\n")
-                        meal_info = int(meal_info)
+                    if use_filter in ["n", "N"]:
                         
-                        
-                        if meal_info == 1:
-                            meal_info = input("Enter meal number:\n")
+                        while check1:
+                            day_num = input("what day would you like to change?\n")
                             try:
-                                meal_info = int(meal_info)
-                                meal_db[str(meal_info)].info()
-                                continue
+                                day_num = int(day_num)
+                                check1 = False
                             except:
-                                print("please enter a valid number")
+                                print("please enter a valid day number\n")
                         
-                        
-                        if meal_info == 2:
-                            meal_info = input("Enter meal number:\n")
+                        if day_num in range(1, len(generated)):
+                            generated = switch_meals_reg(day_num, generated)
+                            contents = meal_view(generated)
+                    
+                    elif use_filter in ["Y", "y"]:
+                        while check1:
+                            day_num = input("what day would you like to change?\n")
+                            tags = input("what tags would you like to use?\n")
                             try:
-                                meal_info = int(meal_info)
-                                editing = input("Would you like to edit catagories or ingredients? c/i\n")
-                                check3 = True
+                                day_num = int(day_num)
+                                check1 = False
+                            except:
+                                print("please enter a valid day number\n")
+                        
+                        if day_num in range(1, len(generated)):
+                            generated = switch_meals_filter(day_num, generated, tags)
+                            contents = meal_view(generated)
+                        
+                elif save == "2":
+                    with open(time, "x") as f:
+                        f.write(contents)
+                elif save == "3":
+                    check = False
+                    break
+                
+                else:
+                    print("please enter a valid number")
+
+
+        elif user_input == "2":
+            
+            check = True
+            while check:
+                try:
+                    day_num = input("How many days would you like to generate?\n")
+                    tags = input("Enter tags you would like to use (seperated by commas):\n")
+                    day_num = int(day_num)
+                    check = False
+                except:
+                    print("please enter a valid number")
+        
+            generated = filter_generation(day_num, tags)
+            contents = meal_view(generated)
+            check = True
+
+            while check:
+                save = input("1. change a day\n2. download\n3. exit\n")
+                if save == "1":
+                    use_filter = input("Use filters? y/n\n")
+                    check1 = True
+                    
+                    
+                    if use_filter in ["n", "N"]:
+                        
+                        while check1:
+                            day_num = input("what day would you like to change?\n")
+                            try:
+                                day_num = int(day_num)
+                                check1 = False
+                            except:
+                                print("please enter a valid day number\n")
+                        
+                        if day_num in range(1, len(generated)):
+                            generated = switch_meals_reg(day_num, generated)
+                            contents = meal_view(generated)
+                    
+                    elif use_filter in ["Y", "y"]:
+                        while check1:
+                            day_num = input("what day would you like to change?\n")
+                            tags = input("what tags would you like to use?\n")
+                            try:
+                                day_num = int(day_num)
+                                check1 = False
+                            except:
+                                print("please enter a valid day number\n")
+                        
+                        if day_num in range(1, len(generated)):
+                            generated = switch_meals_filter(day_num, generated, tags)
+                            contents = meal_view(generated)
+                        
+                elif save == "2":
+                    with open(time, "x") as f:
+                        f.write(contents)
+                elif save == "3":
+                    check = False
+                    break
+                
+                else:
+                    print("please enter a valid number")
+        
+        
+        elif user_input == "3":
+            i = 0
+            check2 = True
+
+            while i in range(len(meal_db)):
+                print(str(i)+ ": " + meal_db[str(i)].name)
+                i += 1
+            while check2:
+                try:
+                    meal_info = input("\n\n1. See meal info\n2. edit meal\n3. remove meals\n4. exit\n")
+                    meal_info = int(meal_info)
+                    
+                    
+                    if meal_info == 1:
+                        meal_info = input("Enter meal number:\n")
+                        try:
+                            meal_info = int(meal_info)
+                            meal_db[str(meal_info)].info()
+                            continue
+                        except:
+                            print("please enter a valid number")
+                    
+                    
+                    if meal_info == 2:
+                        meal_info = input("Enter meal number:\n")
+                        try:
+                            meal_info = int(meal_info)
+                            editing = input("Would you like to edit catagories or ingredients? c/i\n")
+                            check3 = True
+                            
+                            while check3:
+                                if editing == "c":
+                                    add_rem = input("Add or remove categories? a/r\n")
+                                    if add_rem == "a":    
+                                        categ_add(str(meal_info))
+                                        check3 = False
+                                    elif add_rem == "r":
+                                        categ_rem(str(meal_info))
+                                        check3 = False
                                 
-                                while check3:
-                                    if editing == "c":
-                                        add_rem = input("Add or remove categories? a/r\n")
-                                        if add_rem == "a":    
-                                            categ_add(str(meal_info))
-                                            check3 = False
-                                        elif add_rem == "r":
-                                            categ_rem(str(meal_info))
-                                            check3 = False
-                                    
-                                    elif editing == "i":
-                                        add_rem = input("Add or remove ingredients? a/r\n")
-                                        if add_rem == "a":    
-                                            ingre_add(str(meal_info))
-                                            check3 = False
-                                        elif add_rem == "r":
-                                            ingre_rem(str(meal_info))
-                                            check3 = False
-                                continue
-                            except:
-                                print("please enter a valid number")
-                        
-                        
-                        if meal_info == 3:
-                            check2 = False
+                                elif editing == "i":
+                                    add_rem = input("Add or remove ingredients? a/r\n")
+                                    if add_rem == "a":    
+                                        ingre_add(str(meal_info))
+                                        check3 = False
+                                    elif add_rem == "r":
+                                        ingre_rem(str(meal_info))
+                                        check3 = False
+                            continue
+                        except:
+                            print("please enter a valid number")
+                    
+                    if meal_info == 3:
+                        meal_num = input("enter meal number: ")
+                        print(meal_db[meal_num].name + "has been deleted")
+                        del meal_db[meal_num]
 
-                    except:
-                        print("please enter a valid meal number\n")
-            
-            
-            if user_input == 4:
-                add_meal()
-            
-            
-            if user_input == 5:
-                check1 = True
-                while check1:
-                    tags = input("Enter categories and/or ingredients you wish to search by (seperated by commas):\n")
-                    found_meals = search(tags)
-                    print("\n" + str(len(found_meals)) + " found\n")
-                    if type(found_meals) == dict:   
-                        found_meals_list = [(k, v) for k, v in found_meals.items()]
-                        found_meals_list.sort()
-                        for i in range(len(found_meals_list)):
-                            x = found_meals_list[i][0]
-                            print(str(x)+": "+found_meals_list[i][1].name)
+                    if meal_info == 4:
+                        check2 = False
 
-                        check2 = True
-                        while check2:  
-                            meal_info = input("\n1. see meal info\n2. search again\n3. exit\n")
-                            try:
-                                meal_info = int(meal_info)
-                                if meal_info == 1:
-                                    meal_num = input("enter meal number:\n")
-                                    meal_num = int(meal_num)
-                                    meal_db[str(meal_num)].info()
-                                
-                                if meal_info == 2:
-                                    break
+                except:
+                    print("please enter a valid meal number\n")
+        
+        
+        elif user_input == "4":
+            add_meal()
+        
+        
+        elif user_input == "5":
+            check1 = True
+            while check1:
+                tags = input("Enter categories and/or ingredients you wish to search by (seperated by commas):\n")
+                found_meals = search(tags)
+                print("\n" + str(len(found_meals)) + " found\n")
+                if type(found_meals) == dict:   
+                    found_meals_list = [(k, v) for k, v in found_meals.items()]
+                    found_meals_list.sort()
+                    for i in range(len(found_meals_list)):
+                        x = found_meals_list[i][0]
+                        print(str(x)+": "+found_meals_list[i][1].name)
 
-                                if meal_info == 3:
-                                    check1 = False
-                                    check2 = False
-                            except:
-                                print("please enter a valid number")
-            
-            if user_input == 6:
-                meal_db.close()
-                main_check = False
-        except:
+                    check2 = True
+                    while check2:  
+                        meal_info = input("\n1. see meal info\n2. search again\n3. exit\n")
+                        try:
+                            meal_info = int(meal_info)
+                            if meal_info == 1:
+                                meal_num = input("enter meal number:\n")
+                                meal_num = int(meal_num)
+                                meal_db[str(meal_num)].info()
+                            
+                            if meal_info == 2:
+                                break
+
+                            if meal_info == 3:
+                                check1 = False
+                                check2 = False
+                        except:
+                            print("please enter a valid number")
+        
+        elif user_input == "6":
+            meal_db.close()
+            main_check = False
+        else:
             print("please enter a valid number")
     
 main()
